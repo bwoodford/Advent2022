@@ -12,7 +12,7 @@ namespace AdventOfCode2022.Problems.Day1
         [Test]
         public void Test1()
         {
-            Assert.Pass();
+            Assert.AreEqual(Code.ProblemOne(), 69693);
         }
     }
 }

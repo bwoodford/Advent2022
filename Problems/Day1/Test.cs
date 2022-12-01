@@ -10,9 +10,17 @@ namespace AdventOfCode2022.Problems.Day1
         }
 
         [Test]
-        public void Test1()
+        public void TestProblemOne()
         {
-            Assert.AreEqual(Code.ProblemOne(), 69693);
+            var value = Code.ProblemOne();
+            Assert.AreEqual(value, 69693);
+        }
+
+        [Test]
+        public void TestProblemTwo()
+        {
+            var value = Code.ProblemTwo();
+            Assert.AreEqual(value, 200945);
         }
     }
 }

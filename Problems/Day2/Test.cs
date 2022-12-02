@@ -20,7 +20,7 @@ namespace AdventOfCode2022.Problems.Day2
         public void TestProblemTwo()
         {
             var value = Code.ProblemTwo();
-            Assert.AreEqual(value, 200945);
+            Assert.AreEqual(value, 12725);
         }
     }
 }

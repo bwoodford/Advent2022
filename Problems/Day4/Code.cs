@@ -34,7 +34,21 @@ namespace AdventOfCode2022.Problems.Day4
         {
             string[] lines = System.IO.File.ReadAllLines(@"./Problems/Day4/day4.txt");
 
-            return 0;
+            var count = 0;
+
+            foreach(var line in lines)
+            {
+                var lineRanges = line.Split(',');
+                var ranges1 = Array.ConvertAll(lineRanges[0].Split('-'), int.Parse);
+                var ranges2 = Array.ConvertAll(lineRanges[1].Split('-'), int.Parse);
+                
+                if ((ranges1[0] <= ranges2[0] && ranges1[1] >= ranges2[0]) || 
+                    (ranges1[0] >= ranges2[0] && ranges1[0] <= ranges2[1]))
+                {
+                    count += 1;
+                }
+            }
+            return count; 
         }
     }
 }

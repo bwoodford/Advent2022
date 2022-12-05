@@ -30,14 +30,39 @@ namespace AdventOfCode2022.Problems.Day5
             return answer;
         }
 
-        public static int ProblemTwo() 
+        public static string ProblemTwo() 
         {
-            return 0; 
+            var stacks = GetStacks();
+            var commands = GetCommands();
+            var answer = "";
+
+            foreach (var command in commands)
+            {
+                var tmpStack = new Stack<string>();
+
+                for (int i = 0; i < command.Move; i++)
+                {
+                    tmpStack.Push(stacks[command.From].Pop());
+                }
+
+                foreach(var item in tmpStack)
+                {
+                    stacks[command.To].Push(item);
+                }
+            }
+
+            foreach(var stack in stacks)
+            {
+                answer += stack.Pop();
+            }
+            
+            return answer;
         }
 
         private static List<Stack<string>> GetStacks()
         {
-            var fileStacks = System.IO.File.ReadLines(@"./Problems/Day5/day5.txt").TakeWhile(x => x != "");
+            var fileStacks = System.IO.File.ReadLines(@"./Problems/Day5/day5.txt")
+                                            .TakeWhile(x => x != "");
             var stacks = new List<Stack<string>>();
 
             var regex = new Regex(@"\[[A-Z]\]|\s{4}");

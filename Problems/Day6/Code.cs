@@ -16,7 +16,7 @@ namespace AdventOfCode2022.Problems.Day6
 
             curr.Add(chars[p1]);
 
-            while (p2 <= chars.Length)
+            while (p2 < chars.Length)
             {
                 p2++;
                 if (curr.Count == 4) {
@@ -50,7 +50,7 @@ namespace AdventOfCode2022.Problems.Day6
 
             curr.Add(chars[p1]);
 
-            while (p2 <= chars.Length)
+            while (p2 < chars.Length)
             {
                 p2++;
                 if (curr.Count == 14)

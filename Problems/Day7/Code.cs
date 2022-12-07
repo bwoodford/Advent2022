@@ -105,7 +105,6 @@ namespace AdventOfCode2022.Problems.Day7
 
         private static int GetSize(TreeNode<DirElement> node)
         {
-            var size = 0;
             var total = 0;
             if (node.Children.Count() == 0)
             {
@@ -115,12 +114,11 @@ namespace AdventOfCode2022.Problems.Day7
             foreach(var child in node.Children)
             {
                 total += GetSize(child);
-                size += child.Value.Size;
             }
 
-            if (size <= 100000)
+            if (node.Children.Count() > 0 && node.Value.Size <= 100000)
             {
-                total += size;
+                total += node.Value.Size;
             }
 
             return total;

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace AdventOfCode2022.Problems.Day7
 {
@@ -18,14 +16,10 @@ namespace AdventOfCode2022.Problems.Day7
 
         public static int ProblemTwo()
         {
-            string[] lines = System.IO.File.ReadAllLines(@"./Problems/Day7/day7.txt");
-            foreach(var line in lines)
-            {
-
-            }
-            return 0;
+            var root = BuildTree();
+            var free = Math.Abs((70000000 - root.Value.Size) - 30000000);
+            return DeleteDir(root, free);
         }
-
 
         private static TreeNode<DirElement> BuildTree()
         {
@@ -67,6 +61,30 @@ namespace AdventOfCode2022.Problems.Day7
             return root;
         }
 
+        private static int DeleteDir(TreeNode<DirElement> node, int free)
+        {
+            var queue = new Queue<TreeNode<DirElement>>();
+            queue.Enqueue(node);
+
+            var curr = int.MaxValue;
+
+            while (queue.Count > 0)
+            {
+                var ele = queue.Dequeue();
+                if (ele.Children.Count == 0) continue;
+
+                if ( ele.Value.Size >= free && ele.Value.Size < curr){
+                    curr = ele.Value.Size;
+                }
+                foreach(var child in ele.Children)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+
+            return curr;
+        }
+
         private static void UpdateSizes(TreeNode<DirElement> node)
         {
             var size = 0;
@@ -102,7 +120,7 @@ namespace AdventOfCode2022.Problems.Day7
 
             if (size <= 100000)
             {
-                return total += size;
+                total += size;
             }
 
             return total;
@@ -147,13 +165,6 @@ namespace AdventOfCode2022.Problems.Day7
                 var node = new TreeNode<T>(value) {Parent = this};
                 _children.Add(node);
                 return node;
-            }
-
-            public void Traverse(Action<T> action)
-            {
-                action(Value);
-                foreach (var child in _children)
-                    child.Traverse(action);
             }
         }
     }

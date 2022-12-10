@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace AdventOfCode2022.Problems.Day10
 {
@@ -20,7 +21,15 @@ namespace AdventOfCode2022.Problems.Day10
         public void TestProblemTwo()
         {
             var value = Code.ProblemTwo();
-            Assert.AreEqual(value, 0);
+            Assert.AreEqual(value, new List<string>
+            {
+                {"####..##..####.#..#.####..##..#....###.."},
+                {"#....#..#....#.#..#....#.#..#.#....#..#."},
+                {"###..#......#..#..#...#..#..#.#....#..#."},
+                {"#....#.....#...#..#..#...####.#....###.."},
+                {"#....#..#.#....#..#.#....#..#.#....#.#.."},
+                {"####..##..####..##..####.#..#.####.#..#."},
+            });
         }
     }
 }

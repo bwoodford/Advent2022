@@ -1,7 +1,4 @@
-﻿
-using NUnit.Framework.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode2022.Problems.Day12
@@ -16,7 +13,17 @@ namespace AdventOfCode2022.Problems.Day12
 
         public static int ProblemTwo()
         {
-            return 0;
+            var graph = BuildGraph();
+            var answer = int.MaxValue;
+            
+            foreach (var point in graph.StartPoints)
+            {
+                graph.Start = point;
+                var distance = graph.FindShortestPath();
+                if (distance < answer) answer = distance;
+                graph.ResetGraph();
+            }
+            return answer;
         }
 
         internal static Graph BuildGraph()
@@ -24,6 +31,7 @@ namespace AdventOfCode2022.Problems.Day12
             var lines = System.IO.File.ReadAllLines(@"./Problems/Day12/day12.txt");
             List<List<Node>> nodes = new List<List<Node>>();
             var graph = new Graph();
+            var points = new List<Node>();
 
             for (var i = 0; i < lines.Length; i++)
             {
@@ -42,6 +50,8 @@ namespace AdventOfCode2022.Problems.Day12
                         node.Name = 'a';
                         graph.Start = node;
                     }
+
+                    if (node.Name == 'a') points.Add(node);
                     nodes[i].Add(node);
                 }
             }
@@ -74,6 +84,9 @@ namespace AdventOfCode2022.Problems.Day12
                     }
                 }
             }
+
+            graph.AllNodes = nodes.SelectMany(x => x).ToList();
+            graph.StartPoints = points;
 
             return graph;
         }
@@ -111,6 +124,10 @@ namespace AdventOfCode2022.Problems.Day12
         public Node Start;
         public Node End;
 
+        // Only for part 2
+        public List<Node> StartPoints;
+        public List<Node> AllNodes;
+
         public int FindShortestPath()
         {
             var queue = new Queue<Node>();
@@ -128,7 +145,17 @@ namespace AdventOfCode2022.Problems.Day12
                     queue.Enqueue(edge.Child);
                 }
             }
+            if (node != End) return int.MaxValue;
             return node.Distance;
+        }
+
+        public void ResetGraph()
+        {
+            foreach (var node in AllNodes)
+            {
+                node.Visited = false; 
+                node.Distance = 0;
+            }
         }
     }
 }

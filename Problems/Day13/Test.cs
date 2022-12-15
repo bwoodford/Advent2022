@@ -13,14 +13,14 @@ namespace AdventOfCode2022.Problems.Day13
         public void TestProblemOne()
         {
             var value = Code.ProblemOne();
-            Assert.AreEqual(value, 5806);
+            Assert.AreEqual(5806, value);
         }
 
         [Test]
         public void TestProblemTwo()
         {
             var value = Code.ProblemTwo();
-            Assert.AreEqual(value, 0);
+            Assert.AreEqual(23600, value);
         }
     }
 }

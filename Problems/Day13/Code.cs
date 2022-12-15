@@ -10,15 +10,19 @@ namespace AdventOfCode2022.Problems.Day13
     {
         public static int ProblemOne()
         {
-            var containers = GetContainedPackets();
+            var packets = GetPackets();
+            var groups = packets.Select((value, index) => new { value, index })
+                                .GroupBy(x => x.index / 2, x => x.value);
             var answer = 0;
 
-            for (var i = 0; i < containers.Count; i++)
+            var i = 1;
+            foreach (var group in groups)
             {
-                if (ComparePackets(containers[i].Left , containers[i].Right) == -1)
+                if (group.First().CompareTo(group.Last()) == -1)
                 {
-                    answer += (i + 1);
+                    answer += i;
                 }
+                i++;
             }
 
             return answer;
@@ -26,73 +30,44 @@ namespace AdventOfCode2022.Problems.Day13
 
         public static int ProblemTwo()
         {
-            return 0;
+            var packets = GetPackets();
+            var packet1 = Packet.FromString("[[2]]");
+            var packet2 = Packet.FromString("[[6]]");
+            packets.Add(packet1);
+            packets.Add(packet2);
+            packets.Sort();
+
+            var answer = 1;
+            
+            for(var i = 0; i < packets.Count; i++)
+            {
+                if (packets[i].Equals(packet1) || packets[i].Equals(packet2))
+                {
+                    answer *= (i + 1);
+                }
+            }
+            return answer;
         }
 
-
-        private static List<Container> GetContainedPackets()
+        private static List<Packet> GetPackets()
         {
             var lines = System.IO.File.ReadAllLines(@"./Problems/Day13/day13.txt").ToList();
             lines.RemoveAll(x => x == "");
-
-            List<Container> containers = new List<Container>();
-            Container container = new Container();
+            List<Packet> packets = new List<Packet>();
 
             for (var i = 0; i < lines.Count; i++)
             {
-                var parsed = Packet.FromJsonElement((JsonElement)JsonSerializer.Deserialize<object>(lines[i]));
-                if (i % 2 == 0)
-                {
-                    container = new Container();
-                    container.Left = parsed;
-                } else
-                {
-                    container.Right = parsed;
-                    containers.Add(container);
-                }
+                packets.Add(Packet.FromString(lines[i]));
             }
-            return containers;
-        }
 
-        private static int ComparePackets(Packet left, Packet right)
-        {
-            if (left is NumberPacket nLeft && right is NumberPacket nRight)
-            {
-                return nLeft.Value.CompareTo(nRight.Value);
-            } else if (left is ListPacket lLeft && right is ListPacket lRight) {
-                var i = 0;
-                while (i < lLeft.Value.Length && i < lRight.Value.Length)
-                {
-                    var cp = ComparePackets(lLeft.Value[i], lRight.Value[i]);
-                    if (cp == -1) return -1;
-                    if (cp == 1) return 1;
-                    i++;
-                }
-                if (i == lLeft.Value.Length && i == lRight.Value.Length)
-                {
-                    return 0;
-                } else if (i == lLeft.Value.Length)
-                {
-                    return -1;
-                } else 
-                {
-                    return 1;
-                }
-            } else
-            {
-                if (left is NumberPacket eLeft)
-                {
-                    return ComparePackets(new ListPacket(new Packet[] { eLeft }), right);
-                } else if (right is NumberPacket eRight)
-                {
-                    return ComparePackets(left, new ListPacket(new Packet[] { eRight }));
-                }
-            }
-            return 0;
+            return packets;
         }
-
-        internal class Packet
+        
+        internal class Packet: IComparable<Packet>
         {
+            public static Packet FromString(string json) => 
+                Packet.FromJsonElement((JsonElement)JsonSerializer.Deserialize<object>(json));
+
             public static Packet FromJsonElement(JsonElement element) =>
                 element.ValueKind switch
                 {
@@ -100,12 +75,38 @@ namespace AdventOfCode2022.Problems.Day13
                     JsonValueKind.Array => new ListPacket(element.EnumerateArray().Select(FromJsonElement).ToArray()),
                     _ => throw new NotImplementedException(),
                 };
-        }
 
-        internal struct Container 
-        {
-            public Packet Left { get; set; }
-            public Packet Right { get; set; }
+            public int CompareTo(Packet right)
+            {
+                if (this is NumberPacket nLeft && right is NumberPacket nRight)
+                {
+                    return nLeft.Value.CompareTo(nRight.Value);
+                } else if (this is ListPacket lLeft && right is ListPacket lRight) {
+                    var i = 0;
+                    while (i < lLeft.Value.Length && i < lRight.Value.Length)
+                    {
+                        var cp = lLeft.Value[i].CompareTo(lRight.Value[i]);
+                        if (cp != 0) return cp;
+                        i++;
+                    }
+                    if (i == lRight.Value.Length && i < lLeft.Value.Length)
+                    {
+                        return 1;
+                    } else if (i == lLeft.Value.Length && i < lRight.Value.Length)
+                    {
+                        return -1;
+                    } else 
+                    {
+                        return 0;
+                    }
+                } else if (this is NumberPacket eLeft)
+                {
+                    return new ListPacket(new Packet[] { eLeft }).CompareTo(right);
+                } else 
+                {
+                    return this.CompareTo(new ListPacket(new Packet[] { (NumberPacket)right }));
+                }
+            }
         }
 
         internal class ListPacket: Packet
@@ -125,6 +126,5 @@ namespace AdventOfCode2022.Problems.Day13
                 Value = number;
             }
         }
-     
     }
 }
